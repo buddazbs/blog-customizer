@@ -2,8 +2,6 @@ import { ArrowButton } from 'src/ui/arrow-button';
 import { Button } from 'src/ui/button';
 import clsx from 'clsx';
 import { useState } from 'react';
-import { Select } from 'src/ui/select';
-import { RadioGroup } from 'src/ui/radio-group';
 import { Separator } from 'src/ui/separator';
 import {
 	fontFamilyOptions,
@@ -12,9 +10,14 @@ import {
 	contentWidthArr,
 	fontSizeOptions,
 } from 'src/constants/articleProps';
-
 import styles from './ArticleParamsForm.module.scss';
 import React from 'react';
+import { FontFamilySelect } from './FontFamilySelect';
+import { FontSizeRadioGroup } from './FontSizeRadioGroup';
+import { FontColorSelect } from './FontColorSelect';
+import { BackgroundColorSelect } from './BackgroundColorSelect';
+import { ContentWidthSelect } from './ContentWidthSelect';
+import { Text } from 'src/ui/text';
 
 type ArticleParamsFormProps = {
 	isOpen: boolean;
@@ -67,48 +70,33 @@ export const ArticleParamsForm = ({ isOpen, onToggle, initialState, onApply, onR
 		onApply(formState);
 	};
 
-	const getOption = (options: any[], value: string) => options.find((o) => o.value === value) || options[0];
-
 	return (
 		<>
 			<ArrowButton isOpen={isOpen} onClick={onToggle} ref={arrowButtonRef} />
 			<aside ref={asideRef} className={clsx(styles.container, { [styles.container_open]: isOpen })}>
 				<form className={styles.form} onSubmit={handleSubmit} onReset={handleReset}>
-					<Select
-						title="Шрифт"
-						options={fontFamilyOptions}
-						selected={getOption(fontFamilyOptions, formState.fontFamily)}
-						onChange={(option) => handleChange('fontFamily', option.value)}
-					/>
-					<RadioGroup
-						title="Размер шрифта"
-						name="font-size"
-						options={fontSizeOptions}
-						selected={getOption(fontSizeOptions, formState.fontSize)}
-						onChange={(option) => handleChange('fontSize', option.value)}
-					/>
-					<Select
-						title="Цвет шрифта"
-						options={fontColors}
-						selected={getOption(fontColors, formState.fontColor)}
-						onChange={(option) => handleChange('fontColor', option.value)}
-					/>
+					<Text uppercase={true} weight={800} size={31}>
+						Задайте параметры
+					</Text>
+					<div className={styles.fieldBlock}>
+						<FontFamilySelect value={formState.fontFamily} onChange={(value) => handleChange('fontFamily', value)} />
+					</div>
+					<div className={styles.fieldBlock}>
+						<FontSizeRadioGroup value={formState.fontSize} onChange={(value) => handleChange('fontSize', value)} />
+					</div>
+					<div className={styles.fieldBlock}>
+						<FontColorSelect value={formState.fontColor} onChange={(value) => handleChange('fontColor', value)} />
+					</div>
 					<Separator />
-					<Select
-						title="Цвет фона"
-						options={backgroundColors}
-						selected={getOption(backgroundColors, formState.backgroundColor)}
-						onChange={(option) => handleChange('backgroundColor', option.value)}
-					/>
-					<Select
-						title="Ширина контейнера"
-						options={contentWidthArr}
-						selected={getOption(contentWidthArr, formState.contentWidth)}
-						onChange={(option) => handleChange('contentWidth', option.value)}
-					/>
+					<div className={styles.fieldBlock}>
+						<BackgroundColorSelect value={formState.backgroundColor} onChange={(value) => handleChange('backgroundColor', value)} />
+					</div>
+					<div className={styles.fieldBlock}>
+						<ContentWidthSelect value={formState.contentWidth} onChange={(value) => handleChange('contentWidth', value)} />
+					</div>
 					<div className={styles.bottomContainer}>
-						<Button title='Сбросить' htmlType='reset' type='clear' />
-						<Button title='Применить' htmlType='submit' type='apply' />
+						<Button title='СБРОСИТЬ' htmlType='reset' type='clear' />
+						<Button title='ПРИМЕНИТЬ' htmlType='submit' type='apply' />
 					</div>
 				</form>
 			</aside>
