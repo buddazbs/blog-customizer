@@ -15,7 +15,6 @@ import {
 } from 'src/constants/articleProps';
 import styles from './ArticleParamsForm.module.scss';
 import React, { useState } from 'react';
-import { useOverlayClose } from 'src/hooks/useOverlayClose';
 
 interface ArticleParamsFormProps {
 	isOpen: boolean;
@@ -30,8 +29,6 @@ interface ArticleParamsFormProps {
 
 export const ArticleParamsForm = ({ isOpen, onToggle, initialState, onApply, onReset, asideRef, arrowButtonRef, onClose }: ArticleParamsFormProps) => {
 	const [formState, setFormState] = useState<ArticleStateType>(initialState);
-
-	useOverlayClose(asideRef, onClose, isOpen);
 
 	React.useEffect(() => {
 		if (isOpen) {
@@ -57,7 +54,21 @@ export const ArticleParamsForm = ({ isOpen, onToggle, initialState, onApply, onR
 	return (
 		<>
 			<ArrowButton isOpen={isOpen} onClick={onToggle} ref={arrowButtonRef} />
-			<aside ref={asideRef} className={styles.container + (isOpen ? ' ' + styles.container_open : '')}>
+			<div
+				className={styles.overlay + (isOpen ? ' ' + styles.overlay_open : '')}
+				onClick={isOpen ? onClose : undefined}
+			/>
+			<aside
+				ref={asideRef}
+				className={styles.container + (isOpen ? ' ' + styles.container_open : '')}
+				style={{
+					'--font-family': formState.fontFamilyOption.value,
+					'--font-size': formState.fontSizeOption.value,
+					'--font-color': formState.fontColor.value,
+					'--container-width': formState.contentWidth.value,
+					'--bg-color': formState.backgroundColor.value,
+				} as any}
+			>
 				<form className={styles.form} onSubmit={handleSubmit} onReset={handleReset}>
 					<Text uppercase={true} weight={800} size={31}>
 						Задайте параметры
