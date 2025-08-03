@@ -1,53 +1,37 @@
 import { ArrowButton } from 'src/ui/arrow-button';
 import { Button } from 'src/ui/button';
-import clsx from 'clsx';
-import { useState } from 'react';
+import { Select } from 'src/ui/select';
+import { RadioGroup } from 'src/ui/radio-group';
 import { Separator } from 'src/ui/separator';
+import { Text } from 'src/ui/text';
 import {
 	fontFamilyOptions,
 	fontColors,
 	backgroundColors,
 	contentWidthArr,
 	fontSizeOptions,
+	defaultArticleState,
+	ArticleStateType,
 } from 'src/constants/articleProps';
 import styles from './ArticleParamsForm.module.scss';
-import React from 'react';
-import { FontFamilySelect } from './FontFamilySelect';
-import { FontSizeRadioGroup } from './FontSizeRadioGroup';
-import { FontColorSelect } from './FontColorSelect';
-import { BackgroundColorSelect } from './BackgroundColorSelect';
-import { ContentWidthSelect } from './ContentWidthSelect';
-import { Text } from 'src/ui/text';
+import React, { useState } from 'react';
+import { useOverlayClose } from 'src/hooks/useOverlayClose';
 
-type ArticleParamsFormProps = {
+interface ArticleParamsFormProps {
 	isOpen: boolean;
 	onToggle: () => void;
 	onClose: () => void;
-	initialState: any; // Changed from ArticleStateType to any
-	onApply: (state: any) => void; // Changed from ArticleStateType to any
+	initialState: ArticleStateType;
+	onApply: (state: ArticleStateType) => void;
 	onReset: () => void;
 	asideRef: React.RefObject<HTMLElement>;
 	arrowButtonRef: React.RefObject<HTMLDivElement>;
-};
+}
 
-type ArticleStateValues = {
-	fontFamily: string;
-	fontColor: string;
-	backgroundColor: string;
-	contentWidth: string;
-	fontSize: string;
-};
+export const ArticleParamsForm = ({ isOpen, onToggle, initialState, onApply, onReset, asideRef, arrowButtonRef, onClose }: ArticleParamsFormProps) => {
+	const [formState, setFormState] = useState<ArticleStateType>(initialState);
 
-const defaultArticleStateValues: ArticleStateValues = {
-	fontFamily: fontFamilyOptions[0].value,
-	fontColor: fontColors[0].value,
-	backgroundColor: backgroundColors[0].value,
-	contentWidth: contentWidthArr[0].value,
-	fontSize: fontSizeOptions[0].value,
-};
-
-export const ArticleParamsForm = ({ isOpen, onToggle, initialState, onApply, onReset, asideRef, arrowButtonRef }: ArticleParamsFormProps) => {
-	const [formState, setFormState] = useState<ArticleStateValues>(initialState);
+	useOverlayClose(asideRef, onClose, isOpen);
 
 	React.useEffect(() => {
 		if (isOpen) {
@@ -55,13 +39,13 @@ export const ArticleParamsForm = ({ isOpen, onToggle, initialState, onApply, onR
 		}
 	}, [isOpen, initialState]);
 
-	const handleChange = <K extends keyof ArticleStateValues>(key: K, value: string) => {
-		setFormState((prev) => ({ ...prev, [key]: value }));
+	const handleChange = (field: keyof ArticleStateType) => (value: any) => {
+		setFormState((prev) => ({ ...prev, [field]: value }));
 	};
 
 	const handleReset = (e: React.FormEvent) => {
 		e.preventDefault();
-		setFormState(defaultArticleStateValues);
+		setFormState(defaultArticleState);
 		onReset();
 	};
 
@@ -73,27 +57,43 @@ export const ArticleParamsForm = ({ isOpen, onToggle, initialState, onApply, onR
 	return (
 		<>
 			<ArrowButton isOpen={isOpen} onClick={onToggle} ref={arrowButtonRef} />
-			<aside ref={asideRef} className={clsx(styles.container, { [styles.container_open]: isOpen })}>
+			<aside ref={asideRef} className={styles.container + (isOpen ? ' ' + styles.container_open : '')}>
 				<form className={styles.form} onSubmit={handleSubmit} onReset={handleReset}>
 					<Text uppercase={true} weight={800} size={31}>
 						Задайте параметры
 					</Text>
-					<div className={styles.fieldBlock}>
-						<FontFamilySelect value={formState.fontFamily} onChange={(value) => handleChange('fontFamily', value)} />
-					</div>
-					<div className={styles.fieldBlock}>
-						<FontSizeRadioGroup value={formState.fontSize} onChange={(value) => handleChange('fontSize', value)} />
-					</div>
-					<div className={styles.fieldBlock}>
-						<FontColorSelect value={formState.fontColor} onChange={(value) => handleChange('fontColor', value)} />
-					</div>
+					<Select
+						title="Шрифт"
+						options={fontFamilyOptions}
+						selected={formState.fontFamilyOption}
+						onChange={handleChange('fontFamilyOption')}
+					/>
+					<RadioGroup
+						title="Размер шрифта"
+						name="fontSizeOption"
+						options={fontSizeOptions}
+						selected={formState.fontSizeOption}
+						onChange={handleChange('fontSizeOption')}
+					/>
+					<Select
+						title="Цвет шрифта"
+						options={fontColors}
+						selected={formState.fontColor}
+						onChange={handleChange('fontColor')}
+					/>
 					<Separator />
-					<div className={styles.fieldBlock}>
-						<BackgroundColorSelect value={formState.backgroundColor} onChange={(value) => handleChange('backgroundColor', value)} />
-					</div>
-					<div className={styles.fieldBlock}>
-						<ContentWidthSelect value={formState.contentWidth} onChange={(value) => handleChange('contentWidth', value)} />
-					</div>
+					<Select
+						title="Цвет фона"
+						options={backgroundColors}
+						selected={formState.backgroundColor}
+						onChange={handleChange('backgroundColor')}
+					/>
+					<Select
+						title="Ширина контента"
+						options={contentWidthArr}
+						selected={formState.contentWidth}
+						onChange={handleChange('contentWidth')}
+					/>
 					<div className={styles.bottomContainer}>
 						<Button title='СБРОСИТЬ' htmlType='reset' type='clear' />
 						<Button title='ПРИМЕНИТЬ' htmlType='submit' type='apply' />

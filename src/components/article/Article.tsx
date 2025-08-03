@@ -5,8 +5,14 @@ import plane from 'src/images/plane.png';
 import { Text } from 'src/ui/text';
 
 import styles from './Article.module.scss';
+import { ArticleStateType } from 'src/constants/articleProps';
 
-export const Article = () => {
+interface ArticleProps {
+	articleState: ArticleStateType;
+}
+
+export const Article = ({ articleState }: ArticleProps) => {
+	// Здесь можно использовать articleState для применения стилей через CSS-переменные
 	return (
 		<article className={clsx(styles.article)}>
 			<Text as='h1' size={45} weight={800} uppercase dynamicLite>
