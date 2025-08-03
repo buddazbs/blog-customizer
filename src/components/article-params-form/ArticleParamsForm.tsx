@@ -15,6 +15,7 @@ import {
 } from 'src/constants/articleProps';
 import styles from './ArticleParamsForm.module.scss';
 import React, { useState } from 'react';
+import clsx from 'clsx';
 
 interface ArticleParamsFormProps {
 	isOpen: boolean;
@@ -26,6 +27,8 @@ interface ArticleParamsFormProps {
 	asideRef: React.RefObject<HTMLElement>;
 	arrowButtonRef: React.RefObject<HTMLDivElement>;
 }
+
+const allowedSizes = [18, 25, 38] as const;
 
 export const ArticleParamsForm = ({ isOpen, onToggle, initialState, onApply, onReset, asideRef, arrowButtonRef, onClose }: ArticleParamsFormProps) => {
 	const [formState, setFormState] = useState<ArticleStateType>(initialState);
@@ -51,19 +54,22 @@ export const ArticleParamsForm = ({ isOpen, onToggle, initialState, onApply, onR
 		onApply(formState);
 	};
 
+	const fontSizeValue = Number(formState.fontSizeOption.value);
+	const fontSize = allowedSizes.find(s => s === fontSizeValue) ?? 18;
+
 	return (
 		<>
 			<ArrowButton isOpen={isOpen} onClick={onToggle} ref={arrowButtonRef} />
 			<div
-				className={styles.overlay + (isOpen ? ' ' + styles.overlay_open : '')}
+				className={clsx(styles.overlay, { [styles.overlay_open]: isOpen })}
 				onClick={isOpen ? onClose : undefined}
 			/>
 			<aside
 				ref={asideRef}
-				className={styles.container + (isOpen ? ' ' + styles.container_open : '')}
+				className={clsx(styles.container, { [styles.container_open]: isOpen })}
 				style={{
 					'--font-family': formState.fontFamilyOption.value,
-					'--font-size': formState.fontSizeOption.value,
+					'--font-size': fontSize,
 					'--font-color': formState.fontColor.value,
 					'--container-width': formState.contentWidth.value,
 					'--bg-color': formState.backgroundColor.value,
