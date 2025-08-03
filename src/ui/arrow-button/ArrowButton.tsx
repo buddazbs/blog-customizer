@@ -4,7 +4,6 @@ import styles from './ArrowButton.module.scss';
 import clsx from 'clsx';
 import React from 'react';
 
-/** Функция для обработки открытия/закрытия формы */
 export type OnClick = () => void;
 
 type ArrowButtonProps = {
