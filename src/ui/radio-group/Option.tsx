@@ -34,7 +34,6 @@ export const Option = (props: OptionProps) => {
 			data-testid={inputId}
 			tabIndex={0}
 			ref={optionRef}
-			onClick={handleChange}
 		>
 			<input
 				className={styles.input}
@@ -42,6 +41,7 @@ export const Option = (props: OptionProps) => {
 				name={groupName}
 				id={inputId}
 				value={value}
+				checked={isChecked}
 				onChange={handleChange}
 				tabIndex={-1}
 			/>

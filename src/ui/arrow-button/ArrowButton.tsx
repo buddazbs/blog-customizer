@@ -20,6 +20,12 @@ export const ArrowButton = React.forwardRef<HTMLDivElement, ArrowButtonProps>(
 				tabIndex={0}
 				className={clsx(styles.container, { [styles.container_open]: isOpen })}
 				onClick={onClick}
+				onKeyDown={(e) => {
+					if (e.key === 'Enter' || e.key === ' ') {
+						e.preventDefault();
+						onClick();
+					}
+				}}
 				ref={ref}
 			>
 				<img
