@@ -14,50 +14,53 @@ import {
 	ArticleStateType,
 } from 'src/constants/articleProps';
 import styles from './ArticleParamsForm.module.scss';
-import React, { useState } from 'react';
-import { useOverlayClose } from 'src/hooks/useOverlayClose';
+import { useState, FormEvent } from 'react';
+import clsx from 'clsx';
 
-interface ArticleParamsFormProps {
-	isOpen: boolean;
-	onToggle: () => void;
-	onClose: () => void;
-	initialState: ArticleStateType;
-	onApply: (state: ArticleStateType) => void;
-	onReset: () => void;
-	asideRef: React.RefObject<HTMLElement>;
-	arrowButtonRef: React.RefObject<HTMLDivElement>;
-}
+export type ArticleParamsFormProps = {
+	setArticleState: (state: ArticleStateType) => void;
+};
 
-export const ArticleParamsForm = ({ isOpen, onToggle, initialState, onApply, onReset, asideRef, arrowButtonRef, onClose }: ArticleParamsFormProps) => {
-	const [formState, setFormState] = useState<ArticleStateType>(initialState);
-
-	useOverlayClose(asideRef, onClose, isOpen);
-
-	React.useEffect(() => {
-		if (isOpen) {
-			setFormState(initialState);
-		}
-	}, [isOpen, initialState]);
+export const ArticleParamsForm = ({ setArticleState }: ArticleParamsFormProps) => {
+	const [formState, setFormState] = useState<ArticleStateType>(defaultArticleState);
+	const [isOpen, setIsOpen] = useState(false);
 
 	const handleChange = (field: keyof ArticleStateType) => (value: any) => {
 		setFormState((prev) => ({ ...prev, [field]: value }));
 	};
 
-	const handleReset = (e: React.FormEvent) => {
+	const handleReset = (e: FormEvent<HTMLFormElement>) => {
 		e.preventDefault();
 		setFormState(defaultArticleState);
-		onReset();
+		setArticleState(defaultArticleState);
 	};
 
-	const handleSubmit = (e: React.FormEvent) => {
+	const handleSubmit = (e: FormEvent<HTMLFormElement>) => {
 		e.preventDefault();
-		onApply(formState);
+		setArticleState(formState);
+		setIsOpen(false);
 	};
+
+	const fontSizeValue = Number(formState.fontSizeOption.value);
+	const fontSize = fontSizeValue || Number(defaultArticleState.fontSizeOption.value);
 
 	return (
 		<>
-			<ArrowButton isOpen={isOpen} onClick={onToggle} ref={arrowButtonRef} />
-			<aside ref={asideRef} className={styles.container + (isOpen ? ' ' + styles.container_open : '')}>
+			<ArrowButton isOpen={isOpen} onClick={() => setIsOpen((open) => !open)} />
+			<div
+				className={clsx(styles.overlay, { [styles.overlay_open]: isOpen })}
+				onClick={isOpen ? () => setIsOpen(false) : undefined}
+			/>
+			<aside
+				className={clsx(styles.container, { [styles.container_open]: isOpen })}
+				style={{
+					'--font-family': formState.fontFamilyOption.value,
+					'--font-size': fontSize,
+					'--font-color': formState.fontColor.value,
+					'--container-width': formState.contentWidth.value,
+					'--bg-color': formState.backgroundColor.value,
+				} as any}
+			>
 				<form className={styles.form} onSubmit={handleSubmit} onReset={handleReset}>
 					<Text uppercase={true} weight={800} size={31}>
 						Задайте параметры
