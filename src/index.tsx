@@ -10,8 +10,6 @@ import React, { useState } from 'react';
 const domNode = document.getElementById('root') as HTMLDivElement;
 const root = createRoot(domNode);
 
-const allowedSizes = [18, 25, 38] as const;
-
 const App = () => {
 	const [articleState, setArticleState] = useState<ArticleStateType>(defaultArticleState);
 
@@ -20,7 +18,7 @@ const App = () => {
 			className={styles.main}
 			style={{
 				'--font-family': articleState.fontFamilyOption.value,
-				'--font-size': allowedSizes.find(s => s === Number(articleState.fontSizeOption.value)) ?? 18,
+				'--font-size': articleState.fontSizeOption.value,
 				'--font-color': articleState.fontColor.value,
 				'--container-width': articleState.contentWidth.value,
 				'--bg-color': articleState.backgroundColor.value,

@@ -20,18 +20,18 @@ type TextProps = {
 export const Text = ({
 	children,
 	as: Tag = 'div',
-	size = 18,
 	dynamic = false,
+	dynamicLite = false,
+	size = 18,
 	weight = 400,
 	fontStyle = 'normal',
 	uppercase = false,
 	align = 'left',
 	family = 'open-sans',
-	dynamicLite = false,
 }: TextProps) => {
 	const className = clsx(
 		styles.text,
-		styles[`size${size}`],
+		dynamic || dynamicLite ? null : styles[`size${size}`],
 		{ [styles.dynamic]: dynamic },
 		styles[`weight${weight}`],
 		styles[`${fontStyle}`],
